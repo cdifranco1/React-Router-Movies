@@ -1,27 +1,41 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams, useLocation, useRouteMatch } from 'react-router-dom';
 
-const MovieCard = ({ movie }) => {
-    const { title, director, metascore, stars, id} = movie;
+const MovieCard = (props) => {
+    const params = useParams()
+    const id = params.id
+    const {path, url} = useRouteMatch()
+    let movie;
+
+    if (path !== "/"){
+      movie = props.movies.find((movie) => Number(movie.id) == id)
+    } else {
+      movie = props.movie
+    }
+
+    const saveMovie = () => {
+      const addToSavedList = props.addToSavedList;
+      addToSavedList(movie)
+    }
+
     return (
-      <Link to={`/movies/${id}`}>
         <div className="movie-card">
-          <h2>{title}</h2>
+          <h2>{movie.title}</h2>
           <div className="movie-director">
-            Director: <em>{director}</em>
+            Director: <em>{movie.director}</em>
           </div>
           <div className="movie-metascore">
-            Metascore: <strong>{metascore}</strong>
+            Metascore: <strong>{movie.metascore}</strong>
           </div>
           <h3>Actors</h3>
-  
-          {stars.map(star => (
+
+          {movie.stars.map(star => (
             <div key={star} className="movie-star">
               {star}
             </div>
           ))}
+          <div className="save-button" onClick={saveMovie}>Save</div>
         </div>
-      </Link>
     );
 };
 
